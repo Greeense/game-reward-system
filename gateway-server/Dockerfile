@@ -1,0 +1,25 @@
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+# 빌드 타임 ARG 정의
+ARG JWT_SECRET
+ARG AUTH_SERVER_URL
+ARG EVENT_SERVER_URL
+
+# 런타임 ENV 주입
+ENV JWT_SECRET=$JWT_SECRET
+ENV AUTH_SERVER_URL=$AUTH_SERVER_URL
+ENV EVENT_SERVER_URL=$EVENT_SERVER_URL
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]
+

@@ -1,0 +1,52 @@
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+
+  auth-server:
+    build:
+      context: ./auth-server
+      args:
+        JWT_SECRET: ${JWT_SECRET}
+    container_name: auth-server
+    ports:
+      - "4000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/authdb
+    depends_on:
+      - mongo
+
+  event-server:
+    build: ./event-server
+    container_name: event-server
+    ports:
+      - "5000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/eventdb
+    depends_on:
+      - mongo
+
+  gateway-server:
+    build:
+      context: ./gateway-server
+      args:
+        JWT_SECRET: ${JWT_SECRET}
+        AUTH_SERVER_URL: ${AUTH_SERVER_URL}
+        EVENT_SERVER_URL: ${EVENT_SERVER_URL}
+    container_name: gateway-server
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SERVER_URL=http://auth-server:3000
+      - EVENT_SERVER_URL=http://event-server:3000
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=development
+    depends_on:
+      - auth-server
+volumes:
+  mongo-data:
