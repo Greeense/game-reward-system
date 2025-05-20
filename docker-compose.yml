@@ -22,7 +22,10 @@ services:
       - mongo
 
   event-server:
-    build: ./event-server
+    build:
+      context: ./event-server
+      args:
+        JWT_SECRET: ${JWT_SECRET}
     container_name: event-server
     ports:
       - "5000:3000"
