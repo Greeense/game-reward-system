@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
             query.eventId = eventId;
         }
         if(status) {
-            query.stats = status;
+            query.status = status;
         }
         // 일반 유저는 본인것만 조회, 나머지 역할은 유저 전체 조회 가능
         if(['admin','operator','auditor'].includes(decoded.role)){
@@ -59,7 +59,6 @@ export async function GET(req: NextRequest) {
             message : '보상 요청 조회 성공',
             requests : results
         });
-
 
     }catch (err){
         //검증 실패 : 401

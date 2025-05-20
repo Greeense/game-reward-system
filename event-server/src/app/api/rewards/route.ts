@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { Event } from '@/models/Event';
 import { Reward } from '@/models/Reward';
 import { connectDB } from '@/lib/mongo';
-
+import mongoose from 'mongoose';
 //보상 등록
 export async function POST(req: NextRequest) {
     // JWT_SECRET 여부 확인
@@ -84,14 +84,19 @@ export async function GET(req : NextRequest){
         }
 
         const { searchParams } = new URL(req.url);
-        const eventId = searchParams.get('eventid');
+        const eventId = searchParams.get('eventId');
 
         await connectDB();
 
         const filter : Record<string, any> = {};
-        if(eventId){
-            filter.eventId = eventId;
+        if (eventId) {
+            try {
+                filter.eventId = new mongoose.Types.ObjectId(eventId);
+            } catch (e) {
+                return errorResponse('잘못된 eventId 형식입니다.', 400);
+            }
         }
+
         const rewards = await Reward.find(filter).sort({ createdAt : -1}).lean();
 
         return successResponse({

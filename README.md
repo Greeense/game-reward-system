@@ -262,7 +262,7 @@ docker-compose logs auth-server
 |--------|------|------|
 | POST | `/api/my/auto-reward-request` | 자동 보상 요청 |
 | POST | `/api/my/reward-requests` | 수동 요청 |
-| GET | `/api/reward-requests` | 요청 이력 (권한별 필터링) |
+| GET | `/api/reward-requests` | 유저 보상 지급 요청 내역 |
 
 ---
 
@@ -493,7 +493,6 @@ Content-Type: application/json
 - **URL**: `http://localhost:3000/api/events`
 - **Path Parameters**:
     - `:eventId` : 추가 시 해당 eventId 상세 조회
-    - 
 #### 🔐 요청 헤더
 ```http
 Authorization: Bearer <ACCESS_TOKEN>
@@ -580,45 +579,76 @@ Content-Type: application/json
 ```
 ---
 
-### ✅ 7. 이벤트의 보상 조회
+### ✅ 8. 이벤트의 보상 전체 및 이벤트별 조회
 
 #### 🔗 엔드포인트
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/events/rewards`
-
+- **Path Parameters**:
+    - `:eventId` : 추가 시 해당 eventId 에 대한 보상 조회
 #### 🔐 요청 헤더
 ```http
 Authorization: Bearer <ACCESS_TOKEN>
 Content-Type: application/json
 ```
-#### 📨 요청 바디
-```json
-{
-  "eventId" : "<eventId>",
-  "type" : "coupon",
-  "value" : 2,
-  "description" : "32일 연속 로그인 시 포인트 지급",
-  "createdBy" : "admin02",
-  "createdAt" : "2025-05-20T09:46:00.246+00:00"
-}
-```
+
 #### ✅ 예시 응답
 ```json
 {
   "success": true,
   "message": "요청이 성공적으로 처리되었습니다.",
   "data": {
-    "message": "보상 등록 성공",
-    "reward": {
-      "eventId": "<eventId>",
-      "type": "coupon",
-      "value": 2,
-      "description": "32일 연속 로그인 시 포인트 지급",
-      "createdBy": "admin02",
-      "_id": "682c62d004179bbd3725316d",
-      "createdAt": "2025-05-20T11:09:04.646Z",
-      "__v": 0
-    }
+    "message": "보상 조회 성공",
+    "rewards": [
+      {
+        "_id": "682c841642b2738046eb345e",
+        "eventId": "682c83f742b2738046eb3456",
+        "type": "coupon",
+        "value": 2,
+        "description": "32일 연속 로그인 시 포인트 지급",
+        "createdBy": "admin02",
+        "createdAt": "2025-05-20T13:31:02.722Z",
+        "__v": 0
+      }
+    ]
+  }
+}
+```
+
+---
+
+### ✅ 9. 유저 보상 지급 요청 내역
+
+#### 🔗 엔드포인트
+- **Method**: `GET`
+- **URL**: `http://localhost:3000/api/events/rewards`
+- **Path Parameters**:
+    - `:eventId` : 추가 시 해당 eventId 에 대한 보상 조회
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "message": "보상 조회 성공",
+    "rewards": [
+      {
+        "_id": "682c841642b2738046eb345e",
+        "eventId": "682c83f742b2738046eb3456",
+        "type": "coupon",
+        "value": 2,
+        "description": "32일 연속 로그인 시 포인트 지급",
+        "createdBy": "admin02",
+        "createdAt": "2025-05-20T13:31:02.722Z",
+        "__v": 0
+      }
+    ]
   }
 }
 ```
