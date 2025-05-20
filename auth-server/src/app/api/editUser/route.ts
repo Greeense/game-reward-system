@@ -29,7 +29,7 @@ export async function POST(req: NextRequest){
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as { userid : string, role: string };
 
-        const {targetUserid, username, password } = await req.json();
+        const {targetUserid, username, password, role } = await req.json();
         const target = targetUserid || decoded.userid;
 
         //DB 연결
@@ -47,13 +47,6 @@ export async function POST(req: NextRequest){
         const updateFields: Record<string, any> = {};
         if(username){ //이름 수정
             updateFields.username = username;
-        }
-        if(userid && userid !==targetUserid){ //아이디 수정
-            const exists = await User.findOne({ userid });
-            if(exists){
-                return errorResponse('이미 존재하는 사용자id입니다.', 409);
-            }
-            updateFields.userid = userid;
         }
         if(password){ // password 수정
             updateFields.password = await bcrypt.hash(password, 10);

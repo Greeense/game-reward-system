@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
          return errorResponse('서버 연결 실패 또는 경로 오류', 502, err?.message || err);
     }
 }
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, context:any) {
+     const { id } = context.params;
     //jwt토큰 없으면 유효하지 않은 요청으로 처리
     const guard = requireAuthWithRole(req);
     if(guard) {
@@ -62,7 +63,7 @@ export async function GET(req: NextRequest) {
     }
 
     try{
-        const response = await fetch(`${EVENT_SERVER_URL}/api/rewards${query}`, {
+        const response = await fetch(`${EVENT_SERVER_URL}/api/rewards/${id}`, {
             method: 'GET',
             headers: {
               'Content-Type' : 'application/json',

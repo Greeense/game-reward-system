@@ -7,9 +7,10 @@ import { requireAuthWithRole } from '@/middleware/auth';
 export async function GET(  req: NextRequest,context: any) {
   const { id } = context.params;
   // 1. 인증 체크
+  // JWT_SECRET 여부 확인
   const guard = requireAuthWithRole(req);
-  if (guard) {
-    return guard;
+  if(guard) {
+      return guard;
   }
 
   // 2. Authorization 헤더 확인
@@ -26,7 +27,7 @@ export async function GET(  req: NextRequest,context: any) {
 
   try {
     // 4. 내부 API 요청
-    const response = await fetch(`${EVENT_SERVER_URL}/api/events/${params.id}`, {
+    const response = await fetch(`${EVENT_SERVER_URL}/api/events/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': authHeader,
@@ -34,7 +35,7 @@ export async function GET(  req: NextRequest,context: any) {
       },
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
     return new Response(JSON.stringify(data), {
       status: response.status,

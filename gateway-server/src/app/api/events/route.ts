@@ -62,7 +62,8 @@ export async function GET(req: NextRequest) {
     }
 
     try{
-        const res = await fetch(`${EVENT_SERVER_URL}/api/events${query}`, {
+        const query = req.nextUrl.search;
+        const res = await fetch(`${EVENT_SERVER_URL}/api/events/${query}`, {
           method: 'GET',
           headers: {
             Authorization: authHeader

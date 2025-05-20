@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
     }
 
     try{
+        const { searchParams } = new URL(req.url);
+        const status = searchParams.get('status');
+        const userId = searchParams.get('userId');
+
+        const queryString = `?status=${status}&userId=${userId}`;
+
         const response = await fetch(`${EVENT_SERVER_URL}/api/reward-requests${queryString}`,{
             method:'GET',
             headers:{
@@ -32,7 +38,7 @@ export async function POST(req: NextRequest) {
         const data = await response.json();
 
         return new Response(JSON.stringify(data), {
-            stats : response.status,
+            status : response.status,
             headers : {
                 'Content-Type' : 'application/json'
             }

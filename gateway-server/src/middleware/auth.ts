@@ -3,13 +3,14 @@ import jwt from 'jsonwebtoken';
 import { errorResponse, successResponse } from '@/lib/response';
 
 
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET 환경변수가 설정되지 않았습니다.');
-}
-
 //통합인증 및 권한 체크
 export function requireAuthWithRole(req: NextRequest, requiredRole?: string) : Response | undefined {
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET 환경변수가 설정되지 않았습니다.');
+    }
+
+
     const authHeader = req.headers.get('Authorization');
     const token = authHeader?.split(' ')[1];
 
