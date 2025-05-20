@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, successResponse } from '@/lib/response';
 import { requireAuthWithRole } from '@/middleware/auth';
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest, context:any) {
+     const { id } = context.params;
     //jwt토큰 없으면 유효하지 않은 요청으로 처리
     const guard = requireAuthWithRole(req);
     if(guard) {
@@ -22,22 +23,19 @@ export async function POST(req: NextRequest) {
     }
 
     try{
-        const body = await req.text();
-
-        const response = await fetch(`${EVENT_SERVER_URL}/api/rewards`, {
-            method: 'POST',
+        const response = await fetch(`${EVENT_SERVER_URL}/api/rewards/${id}`, {
+            method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
-            Authorization: authHeader
-          },
-          body
-        });
+              'Content-Type' : 'application/json',
+              'Authorization': authHeader
+            }
+       });
 
         const data = await response.json();
 
         return new Response(JSON.stringify(data), {
-          status: response.status,
-          headers: { 'Content-Type': 'application/json' }
+            status: response.status,
+            headers: { 'Content-Type': 'application/json' }
         });
     } catch (err: any) {
          //요청 실패 : event-server 죽거나 경로없을 시

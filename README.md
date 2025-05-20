@@ -263,3 +263,362 @@ docker-compose logs auth-server
 | POST | `/api/my/auto-reward-request` | 자동 보상 요청 |
 | POST | `/api/my/reward-requests` | 수동 요청 |
 | GET | `/api/reward-requests` | 요청 이력 (권한별 필터링) |
+
+---
+
+## 🧪 Postman 테스트 가이드
+
+ API 테스트 명세서 (Postman 템플릿 + 예시 응답 포함)
+ <br>(+) 예시 응답의 경우, gateway-server 응답 확인을 위해 2중첩으로 작업되어있습니다.
+ <br>(+) 실제 서비스 적용 시에는 auth-server 또는 event-server의 응답만을 가져오게끔 작업해야합니다.
+
+---
+### ✅ 1. 회원가입
+
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/auth/signin`
+
+#### 🔐 요청 헤더
+```http
+Content-Type: application/json
+```
+
+#### 📨 요청 바디
+```json
+{
+  "userid" : "user02",
+  "username" : "유저02",
+  "password" : "1234",
+  "role" : "user"
+}
+```
+
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "success": true,
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+      "message": "회원가입 성공",
+      "user": {
+        "userid": "user02",
+        "username": "유저02",
+        "password": "bcrypt 암호화된 값",
+        "role": "user",
+        "loginCount": 0,
+        "consecutiveLoginCount": 0,
+        "lastLoginDate": null,
+        "_id": "682c4fcb1f775b3ffba58865",
+        "__v": 0
+      }
+    }
+  }
+}
+```
+---
+
+### ✅ 2. 유저 로그인
+
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/auth/login`
+
+#### 🔐 요청 헤더
+```http
+Content-Type: application/json
+```
+
+#### 📨 요청 바디
+```json
+{
+  "userid" : "user02",
+  "password" : "1234"
+}
+```
+
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "success": true,
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+      "token": "<ACCESS_TOKEN>"
+    }
+  }
+}
+```
+
+---
+
+### ✅ 3. 유저 정보 조회
+
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/auth/profile`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "success": true,
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+      "message": "내 정보 조회 성공",
+      "user": {
+        "_id": "682c4fcb1f775b3ffba58865",
+        "userid": "user02",
+        "username": "유저02",
+        "role": "user",
+        "loginCount": 2,
+        "consecutiveLoginCount": 1,
+        "lastLoginDate": "2025-05-20T10:44:32.529Z",
+        "__v": 0
+      }
+    }
+  }
+}
+```
+
+---
+
+### ✅ 4. 유저 정보 수정
+
+#### 🔗 엔드포인트
+- **Method**: `PATCH`
+- **URL**: `http://localhost:3000/api/auth/editUser`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### 📨 요청 바디
+```json
+{
+  "username": "newName",
+  "password": "newPassword123"
+}
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "success": true,
+    "message": "요청이 성공적으로 처리되었습니다.",
+    "data": {
+      "message": "유저 정보 수정 성공",
+      "user": {
+        "_id": "682c4fcb1f775b3ffba58865",
+        "userid": "user02",
+        "username": "newName",
+        "role": "user",
+        "loginCount": 1,
+        "consecutiveLoginCount": 1,
+        "lastLoginDate": "2025-05-20T09:47:57.782Z",
+        "__v": 0
+      }
+    }
+  }
+}
+```
+
+---
+
+### ✅ 5. 이벤트 생성
+
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/events`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### 📨 요청 바디
+```json
+{
+  "title" : "3일 출첵 이벤트",
+  "condition" : "3일 연속 로그인",
+  "reward" : "300포인트",
+  "startDate" : "2025-05-20",
+  "endDate" : "2025-08-20"
+}
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "message": "이벤트 생성 성공",
+    "event": {
+      "eventId": "682c5e7904179bbd37253161",
+      "title": "3일 출첵 이벤트",
+      "condition": "3일 연속 로그인",
+      "reward": "300포인트",
+      "startDate": "2025-05-20T00:00:00.000Z",
+      "endDate": "2025-08-20T00:00:00.000Z",
+      "createdBy": "admin02",
+      "status": "upcoming",
+      "createdAt": "2025-05-20T10:50:33.161Z",
+      "__v": 0
+    }
+  }
+}
+```
+---
+
+### ✅ 6. 이벤트 목록 및 상세 조회
+
+#### 🔗 엔드포인트
+- **Method**: `GET`
+- **URL**: `http://localhost:3000/api/events`
+- **Path Parameters**:
+    - `:eventId` : 추가 시 해당 eventId 상세 조회
+    - 
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "events": [
+      {
+        "eventId": "682c5e7904179bbd37253161",
+        "title": "3일 출첵 이벤트",
+        "condition": "3일 연속 로그인",
+        "reward": "300포인트",
+        "startDate": "2025-05-20T00:00:00.000Z",
+        "endDate": "2025-08-20T00:00:00.000Z",
+        "createdBy": "admin02",
+        "status": "upcoming",
+        "createdAt": "2025-05-20T10:50:33.161Z",
+        "__v": 0
+      },
+      {
+        "eventId": "682c5f7604179bbd37253168",
+        "title": "32일 출첵 이벤트",
+        "condition": "32일 연속 로그인",
+        "reward": "300포인트",
+        "startDate": "2025-05-20T00:00:00.000Z",
+        "endDate": "2025-08-20T00:00:00.000Z",
+        "createdBy": "admin02",
+        "status": "upcoming",
+        "createdAt": "2025-05-20T10:54:46.901Z",
+        "__v": 0
+      }
+    ]
+  }
+}
+```
+---
+
+### ✅ 7. 이벤트의 보상 생성
+
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/events/rewards`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### 📨 요청 바디
+```json
+{
+  "eventId" : "<eventId>",
+  "type" : "coupon",
+  "value" : 2,
+  "description" : "32일 연속 로그인 시 포인트 지급",
+  "createdBy" : "admin02",
+  "createdAt" : "2025-05-20T09:46:00.246+00:00"
+}
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "message": "보상 등록 성공",
+    "reward": {
+      "eventId": "<eventId>",
+      "type": "coupon",
+      "value": 2,
+      "description": "32일 연속 로그인 시 포인트 지급",
+      "createdBy": "admin02",
+      "_id": "682c62d004179bbd3725316d",
+      "createdAt": "2025-05-20T11:09:04.646Z",
+      "__v": 0
+    }
+  }
+}
+```
+---
+
+### ✅ 7. 이벤트의 보상 조회
+
+#### 🔗 엔드포인트
+- **Method**: `GET`
+- **URL**: `http://localhost:3000/api/events/rewards`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### 📨 요청 바디
+```json
+{
+  "eventId" : "<eventId>",
+  "type" : "coupon",
+  "value" : 2,
+  "description" : "32일 연속 로그인 시 포인트 지급",
+  "createdBy" : "admin02",
+  "createdAt" : "2025-05-20T09:46:00.246+00:00"
+}
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": true,
+  "message": "요청이 성공적으로 처리되었습니다.",
+  "data": {
+    "message": "보상 등록 성공",
+    "reward": {
+      "eventId": "<eventId>",
+      "type": "coupon",
+      "value": 2,
+      "description": "32일 연속 로그인 시 포인트 지급",
+      "createdBy": "admin02",
+      "_id": "682c62d004179bbd3725316d",
+      "createdAt": "2025-05-20T11:09:04.646Z",
+      "__v": 0
+    }
+  }
+}
+```
