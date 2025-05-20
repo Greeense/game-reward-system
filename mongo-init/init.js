@@ -66,18 +66,16 @@ db2.rewards.insertMany([
 
 db2.usereventprogress.insertMany([
   {
-    _id: "6660eabb1d5f902d8c8b5678",
     userId: "user123",
-    eventId: "665e99b063d761f218ed1234",
+    eventId: eventId,
     loginCount: 3,
     consecutiveLoginCount: 2,
     isCompleted: false,
     updatedAt: "2024-05-27T02:00:00.000Z"
   },
   {
-    _id: "6660eabb1d5f902d8c8b5679",
     userId: "user456",
-    eventId: "665e99b063d761f218ed1234",
+    eventId: eventId,
     loginCount: 5,
     consecutiveLoginCount: 5,
     isCompleted: true,
