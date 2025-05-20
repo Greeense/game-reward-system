@@ -17,13 +17,15 @@ export async function POST(req: NextRequest) {
     }
 
     try{
+        const body = await req.text();
         const response = await fetch(`${process.env.AUTH_SERVER_URL}/api/editUser`,
             {
                 method : 'POST',
                 headers : {
                     'Content-Type' : 'application/json',
                     'Authorization' : authHeader,
-                }
+                },
+                body
             }
         );
         //auth-server에서 400,500에러 반환 시
