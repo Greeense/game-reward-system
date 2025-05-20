@@ -621,9 +621,9 @@ Content-Type: application/json
 
 #### 🔗 엔드포인트
 - **Method**: `GET`
-- **URL**: `http://localhost:3000/api/events/rewards`
+- **URL**: `http://localhost:3000/api/events/reward-request?eventId=`
 - **Path Parameters**:
-    - `:eventId` : 추가 시 해당 eventId 에 대한 보상 조회
+    - `:eventId` : 추가 시 해당 eventId 에 대한 보상 요청 조회
 #### 🔐 요청 헤더
 ```http
 Authorization: Bearer <ACCESS_TOKEN>
@@ -636,19 +636,34 @@ Content-Type: application/json
   "success": true,
   "message": "요청이 성공적으로 처리되었습니다.",
   "data": {
-    "message": "보상 조회 성공",
-    "rewards": [
-      {
-        "_id": "682c841642b2738046eb345e",
-        "eventId": "682c83f742b2738046eb3456",
-        "type": "coupon",
-        "value": 2,
-        "description": "32일 연속 로그인 시 포인트 지급",
-        "createdBy": "admin02",
-        "createdAt": "2025-05-20T13:31:02.722Z",
-        "__v": 0
-      }
-    ]
+    "message": "보상 요청 조회 성공",
+    "requests": []
   }
+}
+```
+
+---
+
+### ✅ 10. 유저 보상 지급 요청(수동)
+#### 🔗 엔드포인트
+- **Method**: `POST`
+- **URL**: `http://localhost:3000/api/events/my/reward-request`
+
+#### 🔐 요청 헤더
+```http
+Authorization: Bearer <ACCESS_TOKEN>
+Content-Type: application/json
+```
+#### 📨 요청 바디
+```json
+{
+  "eventId" : "<eventId>"
+}
+```
+#### ✅ 예시 응답
+```json
+{
+  "success": false,
+  "message": "아직 이벤트 조건을 달성하지 않았습니다."
 }
 ```

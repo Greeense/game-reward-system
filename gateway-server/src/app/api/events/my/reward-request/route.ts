@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
         const body = await req.text();
 
         const response = await fetch(`${EVENT_SERVER_URL}/api/my/reward-request`,{
-            method:'POST',
+            method : 'POST',
             headers : {
                 'Content-Type' : 'application/json',
                 'Authorization' : authHeader
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         return new Response(JSON.stringify(data),{
             status : response.status,
             headers : {
-                'Content-Type': 'application/json'
+                'Content-Type' : 'application/json'
             }
         });
     } catch (err: any) {

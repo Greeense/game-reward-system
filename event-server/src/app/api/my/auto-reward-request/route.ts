@@ -38,6 +38,9 @@ export async function POST(req: NextRequest) {
         await connectDB();
 
         const {eventId } = await req.json();
+        if (!eventId) {
+                  return errorResponse('이벤트 ID가 없습니다.', 400);
+                }
         const userId = decoded.userid;
 
         //1. 중복 요청 방지
