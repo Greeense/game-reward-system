@@ -7,7 +7,7 @@ import { connectDB } from '@/lib/mongo';
 import { User } from '@/models/User';
 import bcrypt from 'bcrypt';
 
-export async function POST(req: NextRequest){
+export async function PATCH(req: NextRequest){
     // JWT_SECRET 여부 확인
     const JWT_SECRET = process.env.JWT_SECRET;
     console.log(JWT_SECRET);
