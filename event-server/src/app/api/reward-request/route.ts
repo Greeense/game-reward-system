@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
         // 일반 유저는 본인것만 조회, 나머지 역할은 유저 전체 조회 가능
         if(['admin','operator','auditor'].includes(decoded.role)){
             if(filterUserId){
-                query.userId = fileterUserId;
+                query.userId = filterUserId;
             }
         }else{
             query.userId = decoded.userid;
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
 
         return successResponse({
             message : '보상 요청 조회 성공',
-            requests : result
+            requests : results
         });
 
 

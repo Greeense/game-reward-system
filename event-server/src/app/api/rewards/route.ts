@@ -2,9 +2,10 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, successResponse } from '@/lib/response';
-import { requireAuthWithRole } from '@/middleware/auth';
 import jwt from 'jsonwebtoken';
-import { connectDB } from '@/models/Event';
+import { Event } from '@/models/Event';
+import { Reward } from '@/models/Reward';
+import { connectDB } from '@/lib/mongo';
 
 //보상 등록
 export async function POST(req: NextRequest) {
@@ -82,12 +83,10 @@ export async function GET(req : NextRequest){
             return errorResponse('보상 조회 권한이 없습니다.', 403);
         }
 
-        const {eventId, type, value, description }  = await req.json();
+        const { searchParams } = new URL(req.url);
+        const eventId = searchParams.get('eventid');
 
         await connectDB();
-
-        const {searchParams} = new URL(req.url);
-        const eventId = searchParams.get('eventid');
 
         const filter : Record<string, any> = {};
         if(eventId){

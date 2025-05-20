@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const rewardRequestSchema = new mongoose.Schema({
   userId: { type: String, required: true },                        // 요청자 ID
   eventId: { type: String, required: true },                       // 대상 이벤트 ID

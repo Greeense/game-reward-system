@@ -34,9 +34,16 @@ export async function POST(req: NextRequest) {
         if(decoded.role !== 'user'){
             return errorResponse('보상 요청 권한은 user만 가능합니다.', 403);
         }
+        const userId = decoded.userid;
 
         await connectDB();
 
+        const { searchParams } = new URL(req.url);
+        const eventId = searchParams.get('eventId');
+
+        if (!eventId) {
+          return errorResponse('이벤트 ID가 없습니다.', 400);
+        }
         // 1. 유저의 이벤트 조건 달성 여부 확인
         const progress = await UserEventProgress.findOne({ userId, eventId });
         if(!progress || !progress.isCompleted){

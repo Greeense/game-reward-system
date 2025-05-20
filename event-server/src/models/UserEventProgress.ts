@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const userEventProgressSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },

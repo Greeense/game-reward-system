@@ -2,9 +2,10 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, successResponse } from '@/lib/response';
-import { requireAuthWithRole } from '@/middleware/auth';
 import jwt from 'jsonwebtoken';
-import { connectDB } from '@/models/Event';
+import { Event } from '@/models/Event';
+import { connectDB } from '@/lib/mongo';
+
 //이벤트 생성
 export async function POST(req: NextRequest) {
     // JWT_SECRET 여부 확인
@@ -88,7 +89,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const status = searchParams.get('status');
 
-        const filter: Record<String, any> = {};
+        const filter: Record<string, any> = {};
         if(status){
             filter.status = status;
         }

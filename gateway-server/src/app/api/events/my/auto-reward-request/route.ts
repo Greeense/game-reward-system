@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             headers : {
                 'Content-Type' : 'application/json'
             }
-        );
+        });
     } catch (err: any) {
          //요청 실패 : event-server 죽거나 경로없을 시
          return errorResponse('서버 연결 실패 또는 경로 오류', 502, err?.message || err);
