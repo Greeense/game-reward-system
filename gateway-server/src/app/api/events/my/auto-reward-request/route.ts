@@ -22,23 +22,27 @@ export async function POST(req: NextRequest) {
     }
 
     try{
-        const response = await fetch(`${EVENT_SERVER_URL}/api/reward-requests${queryString}`,{
-            method:'GET',
-            headers:{
+        const body = await req.text();
+
+        const response = await fetch(`${EVENT_SERVER_URL}/api/my/auto-reward-request`,{
+            method : 'POST',
+            headers : {
                 'Content-Type' : 'application/json',
                 'Authorization' : authHeader
-            }
+            },
+            body
         });
+
         const data = await response.json();
 
-        return new Response(JSON.stringify(data), {
-            stats : response.status,
+        return new Response(JSON.stringify(data),{
+            status : response.status,
             headers : {
                 'Content-Type' : 'application/json'
             }
-        });
+        );
     } catch (err: any) {
-          //요청 실패 : event-server 죽거나 경로없을 시
+         //요청 실패 : event-server 죽거나 경로없을 시
          return errorResponse('서버 연결 실패 또는 경로 오류', 502, err?.message || err);
     }
 }
