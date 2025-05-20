@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     try{
-        const response = await fetch(`${process.env.AUTH_SERVER_URL}/api/profile`,
+        const response = await fetch(`${process.env.AUTH_SERVER_URL}/api/editUser`,
             {
                 method : 'POST',
                 headers : {
