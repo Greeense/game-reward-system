@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, successResponse } from '@/lib/response';
 import { requireAuthWithRole } from '@/middleware/auth';
 
-export async function POST(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
     //jwt토큰 없으면 유효하지 않은 요청으로 처리
     const guard = requireAuthWithRole(req);
     if(guard) {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         const body = await req.text();
         const response = await fetch(`${process.env.AUTH_SERVER_URL}/api/editUser`,
             {
-                method : 'POST',
+                method : 'PATCH',
                 headers : {
                     'Content-Type' : 'application/json',
                     'Authorization' : authHeader,
