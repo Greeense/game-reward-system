@@ -32,7 +32,7 @@ db2 = db.getSiblingDB('eventdb'); // event-server용 DB 선택
 
 // 이벤트 생성
 const eventId = ObjectId();
-db.events.insertOne({
+db2.events.insertOne({
   _id: eventId,
   title: '7일 연속 로그인 보상 이벤트',
   condition: '7일 연속 로그인',
@@ -45,7 +45,7 @@ db.events.insertOne({
 });
 
 //  보상 등록
-db.rewards.insertMany([
+db2.rewards.insertMany([
   {
     eventId: eventId,
     type: 'point',

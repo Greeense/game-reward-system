@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 
         const queryString = `?status=${status}&userId=${userId}`;
 
-        const response = await fetch(`${EVENT_SERVER_URL}/api/reward-requests${queryString}`,{
+        const response = await fetch(`${EVENT_SERVER_URL}/api/reward-request${queryString}`,{
             method:'GET',
             headers:{
                 'Content-Type' : 'application/json',
