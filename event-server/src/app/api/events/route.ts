@@ -5,7 +5,7 @@ import { errorResponse, successResponse } from '@/lib/response';
 import { requireAuthWithRole } from '@/middleware/auth';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '@/models/Event';
-//이벤트 생성ㄴ
+//이벤트 생성
 export async function POST(req: NextRequest) {
     // JWT_SECRET 여부 확인
     const JWT_SECRET = process.env.JWT_SECRET;

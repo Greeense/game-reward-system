@@ -1,30 +1,68 @@
 export const runtime = 'nodejs';
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '@/lib/mongo';
 import { RewardRequest } from '@/models/RewardRequest';
 import { errorResponse, successResponse } from '@/lib/response';
 
-export async function POST(req: NextRequest) {
-  try {
-    await connectDB();
+// 유저 보상 요청 조회
+export async function GET(req: NextRequest) {
+    // JWT_SECRET 여부 확인
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if(!JWT_SECRET){
+        return errorResponse('no JWT_SECRET', 500);
+    }
 
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader) return NextResponse.json({ message: 'No token' }, { status: 401 });
+    // 요청헤더에서 Authorization 토큰 추출
+    const authHeader = req.headers.get('authorization') ?? req.headers.get('Authorization');
+    if(!authHeader) {
+        return errorResponse('Invalid Request',404);
+    }
 
-    const token = authHeader.replace('Bearer ', '');
-    const decoded = jwt.verify(token, 'secret') as any;
+    // Bearer 제거하고 토큰만 추출
+    const token = authHeader.replace('Bearer ','');
+    if(!token){
+        return errorResponse('Invalid Token', 401)
+    }
 
-    const body = await req.json();
-    const request = await RewardRequest.create({
-      userId: decoded.username,
-      eventId: body.eventId,
-      status: 'requested',
-    });
+    try{
+        const decoded = jwt.verify(token, JWT_SECRET) as { userid : string, role: string };
 
-    return NextResponse.json({ message: 'Reward request created', request });
-  } catch (error) {
-    return NextResponse.json({ message: 'Unauthorized or Error', error }, { status: 401 });
-  }
+        await connectDB();
+
+        const { searchParams } = new URL(req.url);
+        const eventId = searchParams.get('eventId');
+        const status = searchParams.get('status');
+        const filterUserId = searchParams.get('userId');
+
+        const query: Record<string, any> = {};
+
+        if(eventId) {
+            query.eventId = eventId;
+        }
+        if(status) {
+            query.stats = status;
+        }
+        // 일반 유저는 본인것만 조회, 나머지 역할은 유저 전체 조회 가능
+        if(['admin','operator','auditor'].includes(decoded.role)){
+            if(filterUserId){
+                query.userId = fileterUserId;
+            }
+        }else{
+            query.userId = decoded.userid;
+        }
+
+        const results = await RewardRequest.find(query).sort({ requestedAt: -1}).lean();
+
+        return successResponse({
+            message : '보상 요청 조회 성공',
+            requests : result
+        });
+
+
+    }catch (err){
+        //검증 실패 : 401
+        return errorResponse('Invalid token',401);
+    }
 }
