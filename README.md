@@ -16,25 +16,55 @@ game-reward-system/
 ├── docker-compose.yml
 ├── auth-server/
 │   ├── src/
-│   │   ├── app/api/login/route.ts          # 로그인 API
-│   │   ├── lib/mongo.ts                    # MongoDB 연결
-│   │   └── models/User.ts                 # 유저 스키마
-│   ├── Dockerfile
-│   └── .env (선택)
+│   │   ├── app/api/login/route.ts                 # 로그인 API
+│   │   ├── app/api/signin/route.ts                # 회원가입 API
+│   │   ├── app/api/profile/route.ts               # 유저정보 조회 API
+│   │   ├── app/api/editUser/route.ts              # 유저정보 수정 API
+│   │   ├── lib/mongo.ts                           # MongoDB 연결
+│   │   ├── lib/response.ts                        # 응답 lib
+│   │   └── models/User.ts                         # 유저 스키마
+│   └── Dockerfile
 ├── event-server/
 │   ├── src/
-│   │   ├── app/api/reward-request/route.ts # 보상 요청 API
-│   │   ├── lib/mongo.ts                    # MongoDB 연결
-│   │   └── models/RewardRequest.ts        # 보상 요청 스키마
-│   ├── Dockerfile
+│   │   ├── app/api/events/route.ts                 # 이벤트 생성 및 목록 조회 API
+│   │   ├── app/api/events/[id]/route.ts            # 이벤트 상세 조회 API
+│   │   ├── app/api/my/auto-reward-request/route.ts # 유저 이벤트 보상 지급(자동) API
+│   │   ├── app/api/my/reward-request/route.ts      # 유저 이벤트 보상 지급(수동) API
+│   │   ├── app/api/reward-request/route.ts         # 유저 이벤트 보상 요청 조회 API
+│   │   ├── app/api/rewards/route.ts                # 이벤트 보상 생성 및 조회 API
+│   │   ├── lib/mongo.ts                            # MongoDB 연결
+│   │   ├── lib/response.ts                         # 응답 lib
+│   │   ├── models/Event.ts                         # 이벤트 스키마
+│   │   ├── models/Reward.ts                        # 보상 스키마
+│   │   ├── models/RewardRequest.ts                 # 이벤트 보상 요청 스키마
+│   │   └── models/UserEventProgress.ts             # 유저별 이벤트 보상지급 진행 스키마
+│   └── Dockerfile
 ├── gateway-server/
 │   ├── src/
 │   │   ├── app/api/auth/
-│   │   │    ├── login/route.ts       # 프록시 로그인 API
-│   │   │    ├── profile/route.ts     # 프록시 내정보조회 API
-│   │   │    └── signin/route.ts      # 프록시 회원가입 API
-│   │   └── app/api/events/reward-request/route.ts # 프록시 보상 요청 API
-│   ├── Dockerfile
+│   │   │    ├── editUser/route.ts                  # 프록시 유저정보수정 API
+│   │   │    ├── login/route.ts                     # 프록시 로그인 API
+│   │   │    ├── profile/route.ts                   # 프록시 유저정보조회 API
+│   │   │    └── signin/route.ts                    # 프록시 회원가입 API
+│   │   ├── app/api/events/
+│   │   │    ├── route.ts                           # 프록시 이벤트 생성 및 목록 조회 API
+│   │   │    ├── [id]/route.ts                      # 프록시 이벤트 상세 조회 API
+│   │   │    ├── my/auto-reward-request/route.ts    # 프록시 유저 이벤트 보상 지급 (자동) API
+│   │   │    ├── my/reward-request/route.ts         # 프록시 유저 이벤트 보상 지급 (수동) API
+│   │   │    ├── reward-request/route.ts            # 프록시 유저 이벤트 요청 조회 API
+│   │   │    └── reward/route.ts                    # 프록시 보상 생성 및 조회 API
+│   │   ├── lib/
+│   │   │    └── response.ts                        # 응답 lib
+│   │   └── middleware/
+│   │        └── auth.ts                            # JWT 인증 미들웨어
+│   └── Dockerfile   
+├── docker-compose.yml
+├── .env
+├── README.md
+└── mongo-init
+   └── init.js                                     # DB별 기본 데이터 삽입
+
+
 ```
 
 ```txt
