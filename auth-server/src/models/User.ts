@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 
 //user 스키마 정의
 const userSchema = new mongoose.Schema({
-    userid : String,
-    username : String,
-    password : String,
-    role : {type : String, default : 'user'},
+    userid : {type : String, required : true, unique : true},
+    username : {type : String, required : true},
+    password : {type : String, required : true},
+    role : {type : String, enum: ['user','operator','auditor','admin'], default : 'user'},
 
     //출석일 관련
     loginCount : {type : Number, default : 0}, //총 로그인 수

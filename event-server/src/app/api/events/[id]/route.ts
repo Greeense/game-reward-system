@@ -1,13 +1,15 @@
 export const runtime = 'nodejs';
 
-import  { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { NextRequest, NextResponse } from 'next/server';
 import { errorResponse, successResponse } from '@/lib/response';
-import { connectDB } from '@/lib/mongo';
-import { User } from '@/models/User';
+import { requireAuthWithRole } from '@/middleware/auth';
+import jwt from 'jsonwebtoken';
+import { connectDB } from '@/models/Event';
 
-
-export async function POST(req: NextRequest){
+export async function GET(
+        req : NextRequest,
+        { params }: {params : {id:string} }
+    ) { //이벤트 상세 조회
     // JWT_SECRET 여부 확인
     const JWT_SECRET = process.env.JWT_SECRET;
     if(!JWT_SECRET){
@@ -22,22 +24,30 @@ export async function POST(req: NextRequest){
 
     // Bearer 제거하고 토큰만 추출
     const token = authHeader.replace('Bearer ','');
+    if(!token){
+        return errorResponse('Invalid Token', 401)
+    }
 
     try{
         const decoded = jwt.verify(token, JWT_SECRET) as { userid : string, role: string };
-        //DB에서 사용자 조회
+
+        if(!['admin','operator'].includes(decoded.role)){
+            return errorResponse('이벤트 조회 권한이 없습니다.', 403);
+        }
+
         await connectDB();
 
-        const user = await User.findOne({ userid : decoded.userid }).select('-password').lean();
-        if(!user) {
-            //notfound user
-            return errorResponse('User not found', 404);
-        }
-        return successResponse({
-            message : '내 정보 조회 성공',
-            user : user,
-        });
+        const event = await Event.findById(params.id).lean();
 
+        if(!event){
+            return errorResponse('Not found Event', 404);
+        }
+
+        const { _id, ...rest } = event;
+
+        return successResponse({
+            event : {eventId : _id, ...rest }
+        });
     }catch (err){
         //검증 실패 : 401
         return errorResponse('Invalid token',401);

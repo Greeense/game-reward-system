@@ -1,4 +1,4 @@
-# 🎯 MSA 게임 이벤트 보상 시스템 - Backend 구성
+# 🎯 MSA 게임 출석 이벤트 자동 보상 지급 시스템 - Backend 구성
 version : 1.0.0
 ## ✅ 기술 스택
 - **Node.js 18**
@@ -29,7 +29,10 @@ game-reward-system/
 │   ├── Dockerfile
 ├── gateway-server/
 │   ├── src/
-│   │   ├── app/api/auth/login/route.ts     # 프록시 로그인 API
+│   │   ├── app/api/auth/
+│   │   │    ├── login/route.ts       # 프록시 로그인 API
+│   │   │    ├── profile/route.ts     # 프록시 내정보조회 API
+│   │   │    └── signin/route.ts      # 프록시 회원가입 API
 │   │   └── app/api/events/reward-request/route.ts # 프록시 보상 요청 API
 │   ├── Dockerfile
 ```

@@ -10,7 +10,7 @@ if (!JWT_SECRET) {
 
 //통합인증 및 권한 체크
 export function requireAuthWithRole(req: NextRequest, requiredRole?: string) : Response | undefined {
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.get('Authorization');
     const token = authHeader?.split(' ')[1];
 
     if(!token) {

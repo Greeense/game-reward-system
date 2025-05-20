@@ -6,15 +6,21 @@ import jwt from 'jsonwebtoken';
 import { connectDB } from '@/lib/mongo';
 import { User } from '@/models/User';
 import { errorResponse, successResponse } from '@/lib/response';
+import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
     //mongodb연결
     await connectDB();
     const { userid, password } = await req.json();
-
-    const user = await User.findOne({ userid, password });
+    // 1. 로그인 확인 : password 비교
+    const user = await User.findOne({ userid }).select('+password');
     if(!user){
-        return errorResponse('Invalid Credentials' ,401);
+        return errorResponse('Not found User' ,404);
+    }
+    // 2. 로그인 확인 : password 비교
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(!isMatch){
+        return errorResponse('Invalid Credentials', 401);
     }
 
     const now = new Date();
@@ -38,10 +44,10 @@ export async function POST(req: NextRequest) {
     user.lastLoginDate = now;
 
     await user.save();
-
+    // 토큰 발급
     const token = jwt.sign(
         { userid : user.userid, role : user.role },
-        'abcdefghkfg1234567890',
+        `${process.env.JWT_SECRET}`,
         { expiresIn : '1h'}
     );
 
